@@ -23,7 +23,7 @@ jobs:
       - name: Git clone the repository
         uses: actions/checkout@v3
       - run: |
-          tar --exclude=.git  -cvzf artifact.zip ./
+          tar --exclude=.git -cvzf artifact.zip ./
           ls -la
           pwd
       - name: configure aws credentials
@@ -36,3 +36,11 @@ jobs:
       - name: Sts GetCallerIdentity
         run: |
           aws sts get-caller-identity
+      - name: AWS Deploy push
+        run: |
+          aws deploy push \
+          --application-name cues \
+          --description "This is a revision for the cues-${{ github.sha }}" \
+          --ignore-hidden-files \
+          --s3-location s3://cues-artifacts/develop/develop-${{ github.sha }}.zip \
+          --source .
